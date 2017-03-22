@@ -14,4 +14,4 @@ or just enter them one by one by calling ./decider.php without any arguments
 
 ## Requirements
 
-Needs php > 7.0
+Needs php >= 7.0
