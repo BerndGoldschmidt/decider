@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Decider
@@ -22,7 +22,9 @@ try {
         $list = (new \Decider\FileImporter())->import($argv[1]);
     }
 
-    (new \Decider\Decider($list))->run();
+    $vector = ($argc >= 3 ? $argv[2] : \Decider\Decider::VECTOR_DEFAULT);
+
+    (new \Decider\Decider($list, $vector))->run();
 
 } catch (\Exception $e) {
     die(

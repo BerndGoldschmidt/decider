@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Decider;
 
@@ -12,11 +12,18 @@ namespace Decider;
 class Decider
 {
     /**
+     * Default vector to rate items against: Importance
+     *
+     * @var string
+     */
+    public const VECTOR_DEFAULT = 'Importance';
+
+    /**
      * Possible answers for a 1:1 decision
      *
      * @var array
      */
-    const POSSIBLE_ANSWERS = [
+    private const POSSIBLE_ANSWERS = [
         '1', // pick option (1) as more important
         '2', // pick option (2) as more important
         'q', // quit
@@ -41,12 +48,20 @@ class Decider
     private $chain;
 
     /**
+     * Vector to rate items against
+     *
+     * @var string
+     */
+    private $vector = self::VECTOR_DEFAULT;
+
+    /**
      * Decider constructor.
      *
      * @param array $list
+     * @param string $vector
      * @param bool $shuffleList
      */
-    public function __construct(array $list, $shuffleList = true)
+    public function __construct(array $list, string $vector = self::VECTOR_DEFAULT, $shuffleList = true)
     {
         $list = array_map('trim', $list);
 
@@ -56,6 +71,7 @@ class Decider
 
         $this->setInputList($list);
         $this->setChain(new Chain());
+        $this->setVector($vector);
     }
 
     /**
@@ -93,9 +109,10 @@ class Decider
         $compareLink = $this->getChain()->getTopLink();
 
         while ($compareLink instanceof ChainLink) {
+            @system('clear');
 
             echo PHP_EOL
-                . 'Which is more important to you? ' . PHP_EOL
+                . 'Which rates higher regarding "' . $this->getVector() . '" to you? ' . PHP_EOL
                 . '  (1) '. $insertLink->getText() . PHP_EOL
                 . '    or ' . PHP_EOL
                 . '  (2) ' . $compareLink->getText()
@@ -132,7 +149,7 @@ class Decider
     private function showResult()
     {
         echo PHP_EOL. PHP_EOL;
-        echo 'Here are your priorities:' . PHP_EOL;
+        echo 'Here are your priorities regarding "' . $this->getVector() . '":' . PHP_EOL;
         echo '--------------------------' . PHP_EOL;
 
         // render chain
@@ -179,6 +196,22 @@ class Decider
     public function setChain(Chain $chain)
     {
         $this->chain = $chain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVector(): string
+    {
+        return $this->vector;
+    }
+
+    /**
+     * @param string $vector
+     */
+    public function setVector(string $vector): void
+    {
+        $this->vector = $vector;
     }
 
 }
